@@ -41,13 +41,48 @@ Note: Discuss in detail compared to [1](../Papers/Operating%20Systems%20must%20s
   - Completed (finished execution, waiting to have its outputs consumed)
 
 **PTask Prototype Implementation**:
-- Scheduling Policy: 
+- *Scheduling Policy*: 
   - First-available: access is arbitrated by locks on the accelerator (GPU) data structures
   - FIFO
-  - Priority
+  - Priority: 
+    - re-calculate priority at status transitions. Sort based on proxy priority (evaluation in Table 4), static priority, wait time and runtime. Sum as a weighted function.
+    - Rank accelerator: based on number of cores, core clock speed and so on.
+  - Data-aware: 
+    - consider the majority of a ptask's input's memory space. (less data migration)
+    - It's possible to leave a ptask on the queue even if there are available accelerators.
+  - Each process using a GPU maintains a budget Bp. The budget will be replenish in period, and the maximum budget is related with priority of the process.
+
+**Evaluation**:
+- *Evaluation Logic*: 
+  - Performance: low latency, high throughput, stable bandwidth, and speedup.
+  - Fairness: measure with and without scheduling policy/ compare different policy's speedup and priority concern
+  - Isolation: implement modular and non-modular version
+- Baseline: host-based. not use GPU.
+- Handcode: use DXGI system
+- Pipes: use four separated process connected by pipes, camera driver map data directly 
+- Modular: similar to pipe, but one process
+- Ptask
+- Measured in real-time (latency) and unconstrained (throughput) mode.
+- *Overheads*:
+  - Memory to represent data structures
+  - Threads to manage ptask
+- *Benchmarks*: seven tasks including simple tasks like matrix multiply and harder task like PCA.
+
+**Questions** for evaluation results:
+- High throughput and low latency for ptask, but low GPU utilization. I guess the non-work-conserving scheduling policy may be the cause.
 
 
 **Limitation** (mentioned in the article):
-- Can only support *static graph* [doesn't support cyclic / dynamic / algorithms that are hard to construct data-flow graph ]
+- Can only support *static graph* [doesn't support cyclic / dynamic / algorithms that are hard to construct data-flow graph]
 - Solution1: unrolling loop
 - Solution2: expressed as a single ptask graph.
+- In user-mode, it is still possible for processes to access GPU directly which violates fairness and isolation.
+- Buffers are unswappable, under high memory load situation, the inputs may not always be materialized.
+
+Need to study:
+- GPU Computing
+
+
+
+#### [3. GPU Computing](../Papers/GPU_Computing.pdf)
+**GPU Architecture**
