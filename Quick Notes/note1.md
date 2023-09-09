@@ -84,5 +84,38 @@ Need to study:
 
 
 
-#### [3. GPU Computing](../Papers/GPU_Computing.pdf)
-**GPU Architecture**
+#### [3. GPU Architecture](../Papers/General-purpose%20graphics%20processor%20architectures.pdf)
+**Introduction**
+Key challenge:
+- Balance between efficiency and flexibility
+
+GPU Hardware Basics:
+- CPU is responsible for initiating computation on the GPU and transferring data to and from the GPU.
+- System contain GPU and CPU:
+![Discrete](Images/![Doscrete](Images/2023-09-08-15-30-00.png).png)
+![Integrated](Images/2023-09-08-15-31-51.png) 
+- Composed of many cores (streaming multiprocessors/ compute units)
+- Each core executes a SIMT program 
+![](Images/2023-09-08-16-12-43.png)
+- Performance comparison between CPU and GPU:
+  - CPU: ALU and Control Unit
+  - GPU: ALU (less control flow)
+
+**Programming Model for GPU**
+Execution Model:
+- CPU allocate memory in GPU--launch kernel in GPU.
+- Grid size (how many thread blocks), Thread Block size (how many threads in a block)
+- Shared memory and local data store (software controlled GPU cache)--scratchpad memory
+
+
+**SIMT Core**
+![Microarchitecture of GPGPU cores](Images/2023-09-09-17-41-49.png)
+- Threads are organized into wraps
+- Warp is the unit of scheduling
+- Loop:
+  - Select a warp
+  - Fetch instruction and decode
+  - Fetch source operand registers
+  - Determine SIMT execution mask values (Mask means some threads execute the instruction-1 while some not-0):
+    - Done by pushing on the SIMT stack
+    - May encounter Deadlock problem (Solution: replace the stack with per warp convergence barriers)
