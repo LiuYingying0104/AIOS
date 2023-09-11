@@ -112,10 +112,55 @@ Execution Model:
 ![Microarchitecture of GPGPU cores](Images/2023-09-09-17-41-49.png)
 - Threads are organized into wraps
 - Warp is the unit of scheduling
-- Loop:
+- **Single Loop**:
   - Select a warp
   - Fetch instruction and decode
   - Fetch source operand registers
   - Determine SIMT execution mask values (Mask means some threads execute the instruction-1 while some not-0):
     - Done by pushing on the SIMT stack
     - May encounter Deadlock problem (Solution: replace the stack with per warp convergence barriers)
+      - Need to introduce more fields
+      - Free to switch between groups of diverged threads
+![Stack-based](Images/2023-09-10-15-54-45.png)
+![Stack-less convergence barrier based](Images/2023-09-10-15-55-14.png)
+
+- **Two Loop**:
+  - Issue a subsequent instruction from a warp while earlier instructions have not yet completed.
+  - How CPU implement:
+    - Scoreboard (Record whether the unit is busy or not, source/destination registers, flags and so on)
+      - Problem when using it in GPU: 1. large number of registers 2. repeatedly lookup
+  - GPU Scoreboard: each entry is the identifier of a register that will be written by an instruction that has been issued but not yet completed execution. Compare dependency with this bits.
+
+- **Three Loop**:
+![](Images/2023-09-10-20-48-51.png)
+  - Benefits of Collection Units: help improve throughput in the presence of bank conflicts between the source operands of individual instructions
+
+
+Note: still reading... (60/142)
+
+
+
+#### [4. Honeycomb](../Papers/Honeycomb-Secure%20and%20Efficient%20GPU%20Executions%20via%20Static%20Validation.pdf)
+
+**Trusted Execution Environments**: Allocate a separate, isolated memory in the hardware for sensitive data, where all computations of sensitive data take place, and where the information in this isolated memory is inaccessible to other parts of the hardware than authorized interfaces. In that way, the privacy calculation for sensitive data can be realized.
+
+**Benefits**:
+Using **static analysis** to validate that mutually distrusted GPU applications are confined to their enclaves.
+- Complement the hardware limitation (Raspberry Pi VC4)
+- Load check instead of runtime check (reduce overhead)
+- Security invariant reduce overheads (originally using IPC)
+
+**Challenges**:
+- Balance trade-offs between the capabilities and the complexities of the validator
+- Minimize TCB, minimize trust on software/hardware stack in GPU
+- Provide system-level support for secure and efficient IPC
+
+
+Notes: still reading...
+
+
+#### [5. Towards a Machine Learning-Assisted Kernel with LAKE](../Papers/LAKE.pdf)
+
+**Motivations**:
+- With the increase of software and hardware complexity, people start to navigate OS trade-off using machine learning techniques.
+- Previous works focus on individual subsystems such as CPU load balancing and I/O latency predictions, but not integrate ML decision into an OS kernel.
