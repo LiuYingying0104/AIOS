@@ -92,3 +92,25 @@ This paper designed and developed KML for conducting ML training and prediction 
 
 3. [IONET: Towards an Open Machine Learning Training Ground for I/O Performance Prediction](../Papers/Related%20works%20of%20LinnOS/IONET.pdf)
 ML-based per-I/O latency predictor (design of 4 sample models)
+
+
+
+#### [3. Artificial Intelligence in the Low-Level Realm-A Survey](../Papers/Survey-AI%20in%20the%20low-level%20realm.pdf)
+**Focus**: Apply ML in the operating systems' main tasks in a low-resource environment.
+**Fields** ML can apply:
+- Resource(memory/cache/) Management (Predictable Latency)
+- Process scheduling
+
+Why OS has **unpredictability**?
+- Interference (memory allocation & de-allocation)
+- Multiprocessor
+- Pipeline optimization
+- Cache interference
+
+**Problems** in implementing ML in kernel space:
+- Limited access to libraries and programming languages in this space
+  - Soln-1: overhead due to two-way path
+  - Soln-2: implement required tools in kernel space (e.g. KMLib)
+- Parameters
+- Inference time
+- Side-channel attack
